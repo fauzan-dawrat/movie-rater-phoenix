@@ -18,6 +18,8 @@ defmodule MovieRaterWeb.Router do
 
     get "/", PageController, :home
     resources "/movies", MovieController
+    resources "/ratings", RatingController
+
   end
 
   # Other scopes may use custom stacks.

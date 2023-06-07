@@ -1,11 +1,13 @@
 defmodule MovieRater.Movies.Movie do
   use Ecto.Schema
-  @derive {Jason.Encoder, only: [:id, :title, :description, :inserted_at, :updated_at]} #Used to encode the data from the database in JSON Format
+  @derive {Jason.Encoder, only: [:id, :title, :description]} # Used to encode the data from the database in JSON Format
   import Ecto.Changeset
 
   schema "movies" do
     field :description, :string
     field :title, :string
+
+    has_many :ratings, Rating
 
     timestamps()
   end

@@ -35,7 +35,15 @@ defmodule MovieRater.Movies do
       ** (Ecto.NoResultsError)
 
   """
-  def get_movie!(id), do: Repo.get!(Movie, id)
+  def get_movie!(id) do
+    case Repo.get(Movie, id) do
+      nil ->
+        nil
+      movie ->
+        movie
+    end
+  end
+
 
   @doc """
   Creates a movie.

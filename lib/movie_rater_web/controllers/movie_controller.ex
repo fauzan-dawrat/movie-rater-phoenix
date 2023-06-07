@@ -69,19 +69,31 @@ defmodule MovieRaterWeb.MovieController do
     render(conn, :edit, movie: movie, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "movie" => movie_params}) do
-    movie = Movies.get_movie!(id)
-
-    case Movies.update_movie(movie, movie_params) do
-      {:ok, movie} ->
-        conn
-        |> put_flash(:info, "Movie updated successfully.")
-        |> redirect(to: ~p"/movies/#{movie}")
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, :edit, movie: movie, changeset: changeset)
+  def update(conn, %{"id" => id, "title" => title, "description" => description}) do
+    if description === "" or title === "" do
+      json(conn, %{Error: "Description and Title cannot be empty!"})
+    else
+      case Movies.get_movie!(id) do
+        nil ->
+          json(conn, %{error: "Movie not found!"})
+        movie ->
+          movie_params = %{description: description, title: title}
+          case Movies.update_movie(movie, movie_params) do
+            {:ok, _movie} ->
+              json(conn, %{message: "Movie updated successfully!"})
+            {:error, _changeset} ->
+              json(conn, %{error: "Unexpected error occurred!"})
+          end
+      end
     end
   end
+
+  def update(conn, _params) do # Function will execute if title or description is not present in the request
+  json(conn, %{Error: "Description and Title are required!"})
+  end
+
+
+
 
   def delete(conn, %{"id" => id}) do
     case Repo.get(Movies.Movie, id) do
